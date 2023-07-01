@@ -124,7 +124,7 @@ const CoolButton = styled.button`
 const Calculator = () => {
   const configuration = new Configuration({
     organization: "org-YwA9Og336yUTL0gZrd7jW5f0",
-    apiKey: "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",
+    apiKey: "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",
   });
 
   const [messages, setMessages] = useState(null);
