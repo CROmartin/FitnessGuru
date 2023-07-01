@@ -74,6 +74,7 @@ header {
   backdrop-filter: blur(2px);
   width: 100%;
   border-bottom: 1px dashed #22857d;
+  z-index: 1000;
 }
 footer {
   padding: 24px 32px;
