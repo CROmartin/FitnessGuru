@@ -124,7 +124,7 @@ const CoolButton = styled.button`
 const Calculator = () => {
   const configuration = new Configuration({
     organization: "org-YwA9Og336yUTL0gZrd7jW5f0",
-    apiKey: "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",
+    apiKey: window.API_KEY,
   });
 
   const [messages, setMessages] = useState(null);
@@ -249,6 +249,9 @@ const Calculator = () => {
   useEffect(() => {
     console.log("Environment: ", process.env?.API_KEY);
     console.log("Environment: ", process.env.NODE_ENV);
+    console.log("Environment: ", window.API_KEY);
+    console.log("Environment: ", window.API_KEY2);
+
     console.log("Tables: ", messages);
   }, [messages]);
 
