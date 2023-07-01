@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
-import guru from "../images/guru.png";
+import guru from "../../images/guru.png";
 
 const StyledCloud = styled.div`
   display: flex;
@@ -29,8 +29,11 @@ const Guru = styled.div`
       height: auto;
     }
     img {
-      width: 100%;
-      height: 100%;
+      width: 50vw;
+      height: 50vw;
+
+      max-width: 218px;
+      max-height: 230px;
     }
   }
 `;
@@ -53,6 +56,7 @@ function Cloud() {
       }
     };
 
+    handleResize();
     window.addEventListener("resize", handleResize);
 
     const interval = setInterval(() => {

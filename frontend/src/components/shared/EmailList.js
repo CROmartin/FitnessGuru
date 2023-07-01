@@ -5,12 +5,19 @@ const Wrapper = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
+  align-items: center;
+
   h1,
   h2 {
+    width: max-content;
     margin-left: 16px;
     margin-bottom: 24px;
     color: white;
+
+    @media (max-width: 480px) {
+      font-size: 20px;
+    }
   }
 `;
 const InputFieldWrapper = styled.div`
@@ -49,6 +56,9 @@ const Row = styled.form`
   gap: 16px;
   margin-bottom: 24px;
   margin-left: 16px;
+  @media (max-width: 480px) {
+    flex-direction: column;
+  }
 `;
 
 const CoolButton = styled.button`
@@ -77,6 +87,9 @@ const CoolButton = styled.button`
     transform: translateY(0);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   }
+  @media (max-width: 480px) {
+    min-width: 200px;
+  }
 `;
 
 const EmailHolder = styled.div`
@@ -84,6 +97,11 @@ const EmailHolder = styled.div`
   flex-wrap: wrap;
   gap: 16px;
   color: white;
+  justify-content: center;
+
+  @media (max-width: 480px) {
+    justify-content: center;
+  }
 `;
 function EmailList() {
   const [emails, setEmails] = useState([]);

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Configuration, OpenAIApi } from "openai";
-import Loader from "./Loader";
+import Loader from "../shared/Loader/Loader";
 import styled from "styled-components";
 
 const InputFieldWrapper = styled.div`
@@ -15,6 +15,10 @@ const Mealsholder = styled.div`
   color: rgba(0, 0, 0, 0);
   div {
     display: none;
+  }
+  .tableHolder {
+    display: block !important;
+    color: black !important;
   }
   h1 {
     margin-top: 32px;
@@ -32,6 +36,7 @@ const Wrapper = styled.div`
   display: flex;
   margin-top: 32px;
   margin-bottom: 32px;
+  width: 100%;
 `;
 const Input = styled.input`
   padding: 10px 15px;
@@ -62,6 +67,9 @@ const Label = styled.label`
 
 const Row = styled.div`
   display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  width: 100%;
   gap: 16px;
 `;
 
@@ -70,11 +78,13 @@ const Column = styled.div`
   flex-direction: column;
   gap: 16px;
   align-items: center;
+  width: 100%;
 `;
 
 const InputHolder = styled.div`
   display: flex;
   flex-direction: column;
+
   div {
     color: white;
     /* margin-bottom: 8px; */
@@ -114,7 +124,7 @@ const CoolButton = styled.button`
 const Calculator = () => {
   const configuration = new Configuration({
     organization: "org-YwA9Og336yUTL0gZrd7jW5f0",
-    apiKey: "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",
+    apiKey: "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",
   });
 
   const [messages, setMessages] = useState(null);
@@ -129,9 +139,20 @@ const Calculator = () => {
 
   const inputRef = useRef([]);
 
+  function extractTables(htmlString) {
+    const tableRegex = /<table\b[^>]*>([\s\S]*?)<\/table>/gi;
+    const tables = [];
+    let match;
+
+    while ((match = tableRegex.exec(htmlString)) !== null) {
+      tables.push(match[0]);
+    }
+
+    return tables;
+  }
+
   const handleSendMessage = async (number, protein, carbs, fats) => {
     const openai = new OpenAIApi(configuration);
-    // setMessages((prevMessages) => [...prevMessages, { text, sender: "user" }]);
     setLoading(true);
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
@@ -144,7 +165,9 @@ const Calculator = () => {
         },
         {
           role: "user",
-          content: `Generate ${number} meals plans, total carb intake for all these meals shouldn't surpass ${carbs}g, total protein intake shouldn't surpass ${protein}g intake and total fat intake shouldn't surpass ${fats}g. Each meal should be in seperated HTML table in format like this: <table>
+          content: `Generate ${number} meal${number == 1 ? "" : "s"} plan${
+            number == 1 ? "" : "s"
+          }, total carb intake for all these meals shouldn't surpass ${carbs}g, total protein intake shouldn't surpass ${protein}g intake and total fat intake shouldn't surpass ${fats}g. Each meal should be in seperated HTML table in format like this: <table>
             <caption><h1>Meal Plan X</h1></caption>
             <thead>
               <tr>
@@ -203,8 +226,7 @@ const Calculator = () => {
     });
     setLoading(false);
 
-    console.log(completion.data.choices[0].message);
-    setMessages(completion.data.choices[0].message);
+    setMessages(extractTables(completion.data.choices[0].message?.content));
   };
 
   const Generate = async () => {
@@ -224,7 +246,9 @@ const Calculator = () => {
     }
   };
 
-  useEffect(() => {}, [messages]);
+  useEffect(() => {
+    console.log("Tables: ", messages);
+  }, [messages]);
 
   const handleClick = (input) => {
     const length = input.value.length;
@@ -312,12 +336,21 @@ const Calculator = () => {
         {!messages && !loading && (
           <CoolButton onClick={() => Generate()}>Generate Meal Plan</CoolButton>
         )}
-        {messages && (
-          <Mealsholder
-            id="mealPlans"
-            dangerouslySetInnerHTML={{ __html: messages.content }}
-          ></Mealsholder>
-        )}
+        <Mealsholder id="mealPlans">
+          {messages?.map((message, index) => {
+            console.log("Message: ", message);
+            return (
+              <div
+                className="tableHolder"
+                key={index}
+                dangerouslySetInnerHTML={{
+                  __html: message,
+                }}
+              ></div>
+            );
+          })}
+        </Mealsholder>
+
         {loading && <Loader />}
       </Column>
     </Wrapper>

@@ -266,8 +266,14 @@ pre tt:after {
 table {
   border-collapse: collapse;
   width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
+.tableHolder {
+  width: 100%;
+  overflow-x: auto;
+}
 caption {
   text-align: left;
   margin-bottom: 10px;
@@ -303,6 +309,7 @@ tbody td:first-child {
   max-width: 150px;
   width: 150px !important;
 }
+
 tbody td {
   min-width: 150px;
   max-width: 150px;
