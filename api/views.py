@@ -1,11 +1,16 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, status
 from .serializers import EmailSerializer, CreateEmailSerializer
 from .models import Email
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from rest_framework.decorators import api_view
+from django.http import JsonResponse
+import openai
+import numpy as np
+from django.conf import settings
 # Create your views here.
+openai.api_key =  settings.API_KEY
 class EmailView(generics.CreateAPIView): 
     queryset = Email.objects.all()
     serializer_class = EmailSerializer
@@ -35,3 +40,62 @@ class CreateEmailView(APIView):
             email = Email(name=name)
             email.save()
             return Response(EmailSerializer(email).data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+def calculate_meal_plan(request):
+    # Predefined data
+    ingredients = [
+        {'name': 'Oatmeal', 'values': [20, 5, 2]},
+        {'name': 'Chicken Salad', 'values': [10, 20, 8]},
+        {'name': 'Grilled Salmon', 'values': [0, 25, 10]},
+    ]
+    targets = [120, 180, 60]
+
+    # Convert ingredients and targets to NumPy arrays
+    M = np.array([item['values'] for item in ingredients])
+    T = np.array(targets)
+
+    # Calculate the pseudoinverse of M
+    M_pinv = np.linalg.pinv(M)
+
+    # Solve for the amounts
+    A = np.dot(M_pinv, T)
+
+    # Calculate new total for each macronutrient
+    new_totals = np.dot(M.T, A)
+
+    # Construct response data
+    amounts = [{**item, 'amount': round(amount, 2)} for item, amount in zip(ingredients, A)]
+    response_data = {
+        'amounts': amounts,
+        'new_totals': new_totals.tolist()
+    }
+    
+    return Response(response_data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def generate_meal_plan(request):
+
+    default = [
+        {
+          "role": "system",
+          "content":
+            "You are nutrient table generator, you are using European measurement system",
+        },
+        {
+          "role": "user",
+          "content": "Please generate a meal plan for a week with 5 meals a day, 200g protein, 50g fats, 100g carbs per day",
+        },
+      ]
+
+    messages = request.data.get('messages', default)
+
+    # create completion with OpenAI
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo", 
+        messages = messages
+    )
+
+    # return response
+    return Response({'message': completion.choices[0].message}, status=status.HTTP_200_OK)
