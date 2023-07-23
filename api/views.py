@@ -81,7 +81,7 @@ def generate_meal_plan(request):
         {
           "role": "system",
           "content":
-            "You are nutrient table generator, you are using European measurement system",
+            "You are nutrient table generator, you are using European measurement system, you should be detailed and give info for each meal",
         },
         {
           "role": "user",
@@ -93,8 +93,8 @@ def generate_meal_plan(request):
 
     # create completion with OpenAI
     completion = openai.ChatCompletion.create(
-        # model="gpt-3.5-turbo", 
-        model="gpt-4",
+        model="gpt-3.5-turbo", 
+        # model="gpt-4",
         messages = messages
     )
 
