@@ -9,6 +9,9 @@ from django.http import JsonResponse
 import openai
 import numpy as np
 from django.conf import settings
+from django.core.mail import send_mail
+
+
 # Create your views here.
 openai.api_key =  settings.API_KEY
 class EmailView(generics.CreateAPIView): 
@@ -100,3 +103,23 @@ def generate_meal_plan(request):
 
     # return response
     return Response({'message': completion.choices[0].message}, status=status.HTTP_200_OK)
+
+
+class SendEmailView(APIView):
+    def post(self, request, format=None):
+        data = request.data
+
+        print(data)
+        # You may want to add validation to check if these fields exist in the data
+        # subject = data['subject']
+        message = data['message']
+        subject = "Fitness Guru - Meal Plan"
+        # message = "Here is your meal plan for the week"
+        to_email = data['to_email']
+        # to_email = "martin.staresincic@gmail.com"
+
+        try:
+            send_mail(subject, message, "fitnessgurumailer@gmail.com", [to_email])
+            return Response({'status': 'Email sent'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
