@@ -9,7 +9,7 @@ from django.http import JsonResponse
 import openai
 import numpy as np
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 
 
 # Create your views here.
@@ -112,14 +112,18 @@ class SendEmailView(APIView):
         print(data)
         # You may want to add validation to check if these fields exist in the data
         # subject = data['subject']
-        message = data['message']
+        # message = data['message']
         subject = "Fitness Guru - Meal Plan"
         # message = "Here is your meal plan for the week"
         to_email = data['to_email']
         # to_email = "martin.staresincic@gmail.com"
-
+        text_content = data['message']
+        html_content = data['html']
+        
         try:
-            send_mail(subject, message, "fitnessgurumailer@gmail.com", [to_email])
+            msg = EmailMultiAlternatives(subject, text_content, to=[to_email])
+            msg.attach_alternative(html_content, "text/html")
+            msg.send()
             return Response({'status': 'Email sent'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
