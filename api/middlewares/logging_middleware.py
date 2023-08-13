@@ -8,9 +8,6 @@ class APILoggingMiddleware:
     def __call__(self, request):
         response = self.get_response(request)
         
-from django.utils import timezone
-from api.models import APILog
-
 class APILoggingMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
