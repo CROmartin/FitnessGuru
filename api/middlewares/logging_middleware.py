@@ -24,7 +24,7 @@ class APILoggingMiddleware:
 
         response = self.get_response(request)
 
-        if 'api' in request.path:
+        if 'api' not in request.path and 'admin' not in request.path:
             APILog.objects.create(
                 path=request.path,
                 method=request.method,
