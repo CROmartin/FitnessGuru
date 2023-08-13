@@ -46,6 +46,7 @@ API_KEY2 = "value test"
 
 ALLOWED_HOSTS = ['*']
 
+CSRF_TRUSTED_ORIGINS = ['https://fitnessguru.ai', 'https://www.fitnessguru.ai']
 
 # Application definition
 
@@ -73,7 +74,6 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     'request.middleware.RequestMiddleware',
     'api.middlewares.logging_middleware.APILoggingMiddleware',
-
 ]
 
 ROOT_URLCONF = "FitnessGuru.urls"
