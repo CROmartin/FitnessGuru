@@ -9,6 +9,7 @@ djangorestframework = "*"
 python-dotenv = "*"
 openai = "*"
 numpy = "*"
+django-request = "*"
 
 [dev-packages]
 

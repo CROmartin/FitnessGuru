@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     "api",
     "rest_framework",
     "frontend.apps.FrontendConfig",
+    "request"
 ]
 
 MIDDLEWARE = [
@@ -70,6 +71,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    'request.middleware.RequestMiddleware',
+    'api.middlewares.logging_middleware.APILoggingMiddleware',
+
 ]
 
 ROOT_URLCONF = "FitnessGuru.urls"
