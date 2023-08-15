@@ -11,6 +11,7 @@ import numpy as np
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 import time
+from django.http import JsonResponse
 
 # Create your views here.
 openai.api_key =  settings.API_KEY
@@ -82,15 +83,14 @@ def generate_meal_plan(request):
 
     default = [
         {
-          "role": "system",
-          "content":
-            "You are nutrient table generator, you are using European measurement system, you should be detailed and give info for each meal",
+            "role": "system",
+            "content": "You are nutrient table generator, you are using European measurement system, you should be detailed and give info for each meal",
         },
         {
-          "role": "user",
-          "content": "Please generate a meal plan for a week with 5 meals a day, 200g protein, 50g fats, 100g carbs per day",
+            "role": "user",
+            "content": "Please generate a meal plan for a week with 5 meals a day, 200g protein, 50g fats, 100g carbs per day",
         },
-      ]
+    ]
 
     messages = request.data.get('messages', default)
 
@@ -103,23 +103,22 @@ def generate_meal_plan(request):
             # create completion with OpenAI
             completion = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
-                # model="gpt-4",
                 messages=messages
             )
 
             # If successful, return response
-            return Response({'message': completion.choices[0].message}, status=status.HTTP_200_OK)
+            return JsonResponse({'message': completion.choices[0].message})
 
-        except openai.error.OpenaiError as e:  # Replace with the specific error type you want to handle, or a generic error type if unsure
-            # If it's the last attempt, raise the error
+        except openai.error.OpenaiError as e:
+            # If it's the last attempt, return an error in JSON format
             if attempt == max_retries - 1:
-                raise e
+                return JsonResponse({'error': str(e)}, status=500)
 
             # Otherwise, wait and try again
             time.sleep(retry_delay)
 
     # If all attempts failed, you can return a generic error response (optional)
-    return Response({'error': 'Unable to generate meal plan after multiple attempts'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    return JsonResponse({'error': 'Unable to generate meal plan after multiple attempts'}, status=500)
 
 
 class SendEmailView(APIView):
