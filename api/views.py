@@ -78,7 +78,7 @@ def calculate_meal_plan(request):
     
     return Response(response_data, status=status.HTTP_200_OK)
 
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 def generate_meal_plan(request):
 
     default = [
@@ -109,7 +109,7 @@ def generate_meal_plan(request):
             # If successful, return response
             return JsonResponse({'message': completion.choices[0].message})
 
-        except openai.error.OpenaiError as e:
+        except openai.error as e:
             # If it's the last attempt, return an error in JSON format
             if attempt == max_retries - 1:
                 return JsonResponse({'error': str(e)}, status=500)

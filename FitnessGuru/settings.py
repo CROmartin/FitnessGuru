@@ -46,7 +46,8 @@ API_KEY2 = "value test"
 
 ALLOWED_HOSTS = ['*']
 
-CSRF_TRUSTED_ORIGINS = ['https://fitnessguru.ai', 'https://www.fitnessguru.ai']
+CSRF_TRUSTED_ORIGINS = ['https://fitnessguru.ai', 'https://www.fitnessguru.ai', "http://localhost:8000"]
+print("API Key:", API_KEY)
 
 # Application definition
 
