@@ -10,7 +10,7 @@ import openai
 import numpy as np
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
-
+import time
 
 # Create your views here.
 openai.api_key =  settings.API_KEY
@@ -94,15 +94,32 @@ def generate_meal_plan(request):
 
     messages = request.data.get('messages', default)
 
-    # create completion with OpenAI
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo", 
-        # model="gpt-4",
-        messages = messages
-    )
+    # Number of retry attempts
+    max_retries = 3
+    retry_delay = 2  # seconds
 
-    # return response
-    return Response({'message': completion.choices[0].message}, status=status.HTTP_200_OK)
+    for attempt in range(max_retries):
+        try:
+            # create completion with OpenAI
+            completion = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                # model="gpt-4",
+                messages=messages
+            )
+
+            # If successful, return response
+            return Response({'message': completion.choices[0].message}, status=status.HTTP_200_OK)
+
+        except openai.error.OpenaiError as e:  # Replace with the specific error type you want to handle, or a generic error type if unsure
+            # If it's the last attempt, raise the error
+            if attempt == max_retries - 1:
+                raise e
+
+            # Otherwise, wait and try again
+            time.sleep(retry_delay)
+
+    # If all attempts failed, you can return a generic error response (optional)
+    return Response({'error': 'Unable to generate meal plan after multiple attempts'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class SendEmailView(APIView):
