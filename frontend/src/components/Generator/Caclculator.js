@@ -246,15 +246,6 @@ const Calculator = () => {
     }
   };
 
-  useEffect(() => {
-    console.log("Environment: ", process.env?.API_KEY);
-    console.log("Environment: ", process.env.NODE_ENV);
-    console.log("Environment: ", window.API_KEY);
-    console.log("Environment: ", window.API_KEY2);
-
-    console.log("Tables: ", messages);
-  }, [messages]);
-
   const handleClick = (input) => {
     const length = input.value.length;
     if (length > 0) {
