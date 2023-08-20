@@ -95,13 +95,13 @@ function Homepage() {
           typingSpeed={120}
           delay={3500}
         />
-        <CoolButton
+        {/* <CoolButton
           onClick={() => {
             navigate("/generator");
           }}
         >
           Try generator <span>›</span>
-        </CoolButton>
+        </CoolButton> */}
       </Column>
       <EmailList />
     </Wrapper>

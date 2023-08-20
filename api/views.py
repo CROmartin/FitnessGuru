@@ -101,8 +101,10 @@ def generate_meal_plan(request):
     for attempt in range(max_retries):
         try:
             # create completion with OpenAI
+
             completion = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
+                model="gpt-3.5-turbo-16k",
+                # model="gpt-4",
                 messages=messages
             )
 
