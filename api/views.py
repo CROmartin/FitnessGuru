@@ -103,8 +103,8 @@ def generate_meal_plan(request):
             # create completion with OpenAI
 
             completion = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo-16k",
-                # model="gpt-4",
+                # model="gpt-3.5-turbo-16k",
+                model="gpt-4",
                 messages=messages
             )
 
