@@ -4,7 +4,13 @@ import EmailList from "../components/shared/EmailList";
 import TypingEffect from "../components/shared/TypingEffect";
 import styled from "styled-components";
 import { keyframes } from "styled-components";
-import { useNavigate } from "react-router-dom";
+import Screen1 from "../images/screen_1.jpeg";
+import Screen2 from "../images/screen_2.jpeg";
+import Screen3 from "../images/screen_3.jpeg";
+import Screen4 from "../images/screen_4.jpeg";
+import Screen5 from "../images/screen_5.jpeg";
+import Screen6 from "../images/screen_6.jpeg";
+
 const Wrapper = styled.div`
   width: 100%;
   display: flex;
@@ -79,8 +85,55 @@ const CoolButton = styled.button`
     padding-bottom: 2px;
   }
 `;
+
+const Space = styled.div`
+  height: 0px;
+  width: 100%;
+  margin-top: 10vh;
+`;
+
+const Image = styled.img`
+  width: auto;
+  max-width: 200px;
+  height: auto;
+`;
+
+const ImageContainer = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 2%;
+  margin-top: 64px;
+  max-width: 940px;
+  overflow-x: scroll;
+  scrollbar-width: thin;
+  scrollbar-color: gray transparent;
+
+  ::-webkit-scrollbar {
+    width: 8px;
+    background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: gray;
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
+`;
 function Homepage() {
-  const navigate = useNavigate();
+  var settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+
   return (
     <Wrapper>
       <Cloud />
@@ -95,6 +148,15 @@ function Homepage() {
           typingSpeed={120}
           delay={3500}
         />
+        <ImageContainer>
+          <Image src={Screen1} alt="screen 1" />
+          <Image src={Screen2} alt="screen 2" />
+          <Image src={Screen3} alt="screen 3" />
+          <Image src={Screen4} alt="screen 4" />
+          <Image src={Screen5} alt="screen 5" />
+          <Image src={Screen6} alt="screen 6" />
+        </ImageContainer>
+
         {/* <CoolButton
           onClick={() => {
             navigate("/generator");
@@ -103,6 +165,7 @@ function Homepage() {
           Try generator <span>›</span>
         </CoolButton> */}
       </Column>
+
       <EmailList />
     </Wrapper>
   );

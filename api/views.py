@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, status
-from .serializers import EmailSerializer, CreateEmailSerializer
-from .models import Email
+from .serializers import EmailSerializer, CreateEmailSerializer, CreateTestersEmailSerializer, TestersEmailSerializer
+from .models import Email, TestersEmail
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -45,6 +45,30 @@ class CreateEmailView(APIView):
             email.save()
             return Response(EmailSerializer(email).data, status=status.HTTP_201_CREATED)
 
+
+class CreateTestersEmailView(APIView):
+    serializer_class = CreateTestersEmailSerializer
+    def post(self, request, format=None):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            name = serializer.data.get('name')
+            email = TestersEmail(name=name)
+            email.save()
+            return Response(TestersEmailSerializer(email).data, status=status.HTTP_201_CREATED)
+
+
+class GetTestersEmails(APIView):
+    serializer_class = TestersEmailSerializer
+    def get(self, request, format=None):
+        if not self.request.session.exists(self.request.session.session_key):
+            self.request.session.create()
+        emails = TestersEmail.objects.all()
+        serializer = self.serializer_class(emails, many=True)
+        return Response(serializer.data)
+    
 
 @api_view(['POST'])
 def calculate_meal_plan(request):
@@ -128,20 +152,25 @@ class SendEmailView(APIView):
         data = request.data
 
         print(data)
-        # You may want to add validation to check if these fields exist in the data
-        # subject = data['subject']
-        # message = data['message']
+
+
+
         subject = "Fitness Guru - Meal Plan"
-        # message = "Here is your meal plan for the week"
+
         to_email = data['to_email']
-        # to_email = "martin.staresincic@gmail.com"
         text_content = data['message']
         html_content = data['html']
         
         try:
+            # Send the email
             msg = EmailMultiAlternatives(subject, text_content, to=[to_email])
             msg.attach_alternative(html_content, "text/html")
             msg.send()
+
+            # Store TesterEmail
+            email_instance = TestersEmail(name=to_email)
+            email_instance.save()
+
             return Response({'status': 'Email sent'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

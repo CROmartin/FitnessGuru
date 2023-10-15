@@ -5,6 +5,10 @@ class Email(models.Model):
     name = models.CharField(max_length=50, unique=True)
     requested_on = models.DateTimeField(auto_now_add=True)
 
+class TestersEmail(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    requested_on = models.DateTimeField(auto_now_add=True)
+
 class APILog(models.Model):
     path = models.CharField(max_length=255)
     method = models.CharField(max_length=10)
